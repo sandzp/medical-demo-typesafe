@@ -1,0 +1,106 @@
+<svg viewBox="0 0 900 1140" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="diagTitle diagDesc">
+  <title id="diagTitle">Entity grounding pipeline</title>
+  <desc id="diagDesc">A medical transcription is extracted by an open-ended LLM, then each entity is narrowed from a large ontology down to a small candidate shortlist before Typesafe classifies it, with a dose-validation branch for drugs.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#24313A"/>
+    </marker>
+    <marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1F7A6C"/>
+    </marker>
+    <marker id="arrowWarn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B5562B"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="1140" rx="24" fill="#FAF8F4" stroke="#E7E2D8" stroke-width="1.5"/>
+
+  <!-- A: input -->
+  <rect x="300" y="30" width="300" height="50" rx="25" fill="#FFFFFF" stroke="#35454E" stroke-width="2"/>
+  <text x="450" y="61" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#24313A">Medical transcription</text>
+
+  <line x1="450" y1="80" x2="450" y2="118" stroke="#24313A" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- B: Stage 1 -->
+  <rect x="270" y="120" width="360" height="80" rx="10" fill="#FFFFFF" stroke="#35454E" stroke-width="2"/>
+  <text x="450" y="152" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#24313A">Stage 1 &#183; Extraction LLM</text>
+  <text x="450" y="174" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#6B7B84">open text &#8594; entity spans (optimizes for recall)</text>
+
+  <line x1="450" y1="200" x2="450" y2="246" stroke="#24313A" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="468" y="228" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6B7B84">raw entity spans</text>
+
+  <!-- C: entities -->
+  <rect x="170" y="248" width="560" height="104" rx="10" fill="#FFFFFF" stroke="#35454E" stroke-width="1.5"/>
+  <text x="450" y="280" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#24313A">Conditions &#183; PMH &#183; Drugs &amp; dose</text>
+  <text x="450" y="303" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#24313A">Symptoms &#183; Phenotypes &#183; Allergies &#183; Procedures</text>
+  <text x="450" y="328" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" font-style="italic" fill="#6B7B84">free-text spans &#8212; one set per entity type</text>
+
+  <line x1="450" y1="352" x2="450" y2="378" stroke="#24313A" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="468" y="370" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6B7B84">for each entity</text>
+
+  <!-- D: ontology store (cylinder) -->
+  <ellipse cx="130" cy="500" rx="85" ry="16" fill="#FFFFFF" stroke="#6B7B84" stroke-width="1.5"/>
+  <rect x="45" y="400" width="170" height="100" fill="#FFFFFF" stroke="none"/>
+  <line x1="45" y1="400" x2="45" y2="500" stroke="#6B7B84" stroke-width="1.5"/>
+  <line x1="215" y1="400" x2="215" y2="500" stroke="#6B7B84" stroke-width="1.5"/>
+  <ellipse cx="130" cy="400" rx="85" ry="16" fill="#FFFFFF" stroke="#6B7B84" stroke-width="1.5"/>
+  <text x="130" y="536" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#24313A">SNOMED CT &#183; RxNorm &#183; HPO</text>
+  <text x="130" y="552" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#6B7B84">100,000+ concepts</text>
+
+  <line x1="215" y1="450" x2="328" y2="450" stroke="#24313A" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="270" y="436" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#6B7B84">similarity search</text>
+
+  <!-- E: funnel (Stage 2) -->
+  <polygon points="290,380 610,380 530,520 370,520" fill="#E1F0EC" stroke="#1F7A6C" stroke-width="2.5"/>
+  <text x="450" y="418" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#145A4F">Stage 2 &#183; Ontology retrieval</text>
+  <text x="450" y="440" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#145A4F">embedding / fuzzy match, top-k</text>
+  <text x="450" y="460" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#145A4F">+ explicit NO_MATCH option</text>
+
+  <line x1="450" y1="520" x2="450" y2="546" stroke="#1F7A6C" stroke-width="2.5" marker-end="url(#arrowAccent)"/>
+
+  <!-- F: shortlist -->
+  <rect x="290" y="548" width="320" height="62" rx="8" fill="#FFFFFF" stroke="#1F7A6C" stroke-width="2.5"/>
+  <text x="450" y="574" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#145A4F">Per-entity shortlist</text>
+  <text x="450" y="595" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6B7B84">top-k ontology codes + NO_MATCH</text>
+
+  <line x1="450" y1="610" x2="450" y2="646" stroke="#24313A" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="470" y="624" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#1F7A6C">closed list &#8212;</text>
+  <text x="470" y="638" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#1F7A6C">Typesafe-compatible</text>
+
+  <!-- G: Stage 3 -->
+  <rect x="300" y="648" width="300" height="82" rx="10" fill="#FFFFFF" stroke="#35454E" stroke-width="2.5"/>
+  <text x="450" y="680" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#24313A">Stage 3 &#183; Typesafe</text>
+  <text x="450" y="701" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#6B7B84">closed-set classifier &#8212; picks from shortlist</text>
+  <text x="450" y="719" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6B7B84">(or NO_MATCH)</text>
+
+  <line x1="450" y1="730" x2="450" y2="756" stroke="#24313A" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="470" y="748" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6B7B84">grounded entity + confidence</text>
+
+  <!-- H: decision -->
+  <polygon points="450,758 540,808 450,858 360,808" fill="#FFFFFF" stroke="#35454E" stroke-width="2"/>
+  <text x="450" y="813" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#24313A">drug?</text>
+
+  <line x1="450" y1="858" x2="450" y2="1036" stroke="#24313A" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="466" y="900" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6B7B84">no</text>
+
+  <polyline points="540,808 700,808 700,846" fill="none" stroke="#B5562B" stroke-width="2" marker-end="url(#arrowWarn)"/>
+  <text x="605" y="796" font-family="Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#B5562B">yes</text>
+
+  <!-- I: Stage 4 -->
+  <rect x="560" y="848" width="280" height="72" rx="10" fill="#FFFFFF" stroke="#B5562B" stroke-width="2.5"/>
+  <text x="700" y="878" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#24313A">Stage 4 &#183; Dose validation</text>
+  <text x="700" y="898" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#6B7B84">normalize dose vs. formulary reference</text>
+
+  <line x1="700" y1="920" x2="700" y2="946" stroke="#B5562B" stroke-width="2" marker-end="url(#arrowWarn)"/>
+
+  <!-- J: bucket -->
+  <rect x="560" y="948" width="280" height="52" rx="8" fill="#FFFFFF" stroke="#B5562B" stroke-width="2"/>
+  <text x="700" y="980" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#24313A">bucket: in-range &#183; above &#183; below &#183; unknown</text>
+
+  <polyline points="700,1000 700,1028 450,1028 450,1036" fill="none" stroke="#B5562B" stroke-width="2" marker-end="url(#arrowWarn)"/>
+
+  <!-- K: final -->
+  <rect x="300" y="1038" width="300" height="62" rx="25" fill="#FFFFFF" stroke="#24313A" stroke-width="2.5"/>
+  <text x="450" y="1075" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#24313A">Structured, grounded record</text>
+</svg>

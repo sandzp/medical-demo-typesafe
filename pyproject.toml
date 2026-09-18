@@ -1,0 +1,27 @@
+[project]
+name = "medical-demo-typesafe"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.10"
+dependencies = [
+    "typesafe-sdk>=0.6.0",
+    "cooksafe",
+    "ipython",
+    "ipykernel",
+    "pandas",
+    "openai",
+    "python-dotenv",
+    "httpx",
+    "notebook",
+    "tqdm",
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "typesafe"
+url = "https://pypi.typesafe.ai/"
+
+[tool.uv.sources]
+cooksafe = { index = "typesafe" }
